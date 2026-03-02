@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -57,12 +58,36 @@ public class FrmJuego extends JFrame {
     }
 
     private void verificar() {
-        String resultado = "";
-        if (tpJugadores.getSelectedIndex() == 0) {
-            resultado = jugador1.getGrupos();
-        } else {
-            resultado = jugador2.getGrupos();
-        }
-        JOptionPane.showMessageDialog(null, resultado);
+
+    Jugador jugadorActual;
+
+    if (tpJugadores.getSelectedIndex() == 0) {
+        jugadorActual = jugador1;
+    } else {
+        jugadorActual = jugador2;
+    }
+
+    String resultado = jugadorActual.getGrupos();
+
+    var escaleras = jugadorActual.obtenerEscaleras();
+
+         if (!escaleras.isEmpty()) {
+
+            if (resultado.equals("No se encontraron grupos")) {
+                resultado = "Se encontraron los siguientes grupos:\n";
+             }
+
+              for (ArrayList<Carta> esc : escaleras) {
+                 Pinta pintaEscalera = esc.get(0).getPinta();
+                  resultado += "ESCALERA"
+                            + esc.size()
+                            + " de "
+                            + pintaEscalera
+                            + "\n";
+         }
+
+        
+      }
+      JOptionPane.showMessageDialog(null, resultado);
     }
 }

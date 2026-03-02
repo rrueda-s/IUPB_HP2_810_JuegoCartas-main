@@ -1,8 +1,11 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class Jugador {
+public class Jugador 
+
+{
 
     private final int TOTAL_CARTAS = 10;
     private final int MARGEN_IZQUIERDA = 10;
@@ -54,6 +57,65 @@ public class Jugador {
                 indice++;
             }
         }
+
+        
+       
         return resultado;
     }
+
+
+   
+    public ArrayList<ArrayList<Carta>> obtenerEscaleras() {
+
+        ArrayList<ArrayList<Carta>> escaleras = new ArrayList<>();
+
+         for (Pinta pinta : Pinta.values()) {
+
+            ArrayList<Carta> mismasPintas = new ArrayList<>();
+
+       
+            for (Carta c : cartas) {
+                if (c.getPinta() == pinta) {
+                  mismasPintas.add(c);
+                    }
+            }
+
+        
+            mismasPintas.sort((a, b) ->
+            Integer.compare(
+                a.getNombre().ordinal(),
+                b.getNombre().ordinal()
+            ));
+            
+
+        
+                for (int i = 0; i < mismasPintas.size(); i++) {
+
+                 ArrayList<Carta> secuencia = new ArrayList<>();
+                    secuencia.add(mismasPintas.get(i));
+
+                    for (int j = i + 1; j < mismasPintas.size(); j++) {
+
+                        Carta anterior = secuencia.get(secuencia.size() - 1);
+                        Carta actual = mismasPintas.get(j);
+
+                     if (actual.getNombre().ordinal()
+                        == anterior.getNombre().ordinal() + 1) {
+
+                        secuencia.add(actual);
+
+                        } else if (actual.getNombre().ordinal()
+                        > anterior.getNombre().ordinal() + 1) {
+                        break;
+                     }
+                        }
+
+                        if (secuencia.size() >= 3) {
+                     escaleras.add(secuencia);
+                    }
+                 }
+         }
+
+     return escaleras;
+    }   
 }
