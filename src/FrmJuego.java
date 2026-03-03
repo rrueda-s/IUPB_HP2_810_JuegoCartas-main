@@ -59,35 +59,25 @@ public class FrmJuego extends JFrame {
 
     private void verificar() {
 
-    Jugador jugadorActual;
+
+    String resultado = "";
+    int puntaje = 0;
 
     if (tpJugadores.getSelectedIndex() == 0) {
-        jugadorActual = jugador1;
+        resultado = jugador1.getGrupos();
+        puntaje = jugador1.calcularPuntaje();
     } else {
-        jugadorActual = jugador2;
+        resultado = jugador2.getGrupos();
+        puntaje = jugador2.calcularPuntaje();
     }
 
-    String resultado = jugadorActual.getGrupos();
+    resultado += "\nPuntaje cartas sueltas: " + puntaje;
 
-    var escaleras = jugadorActual.obtenerEscaleras();
-
-         if (!escaleras.isEmpty()) {
-
-            if (resultado.equals("No se encontraron grupos")) {
-                resultado = "Se encontraron los siguientes grupos:\n";
-             }
-
-              for (ArrayList<Carta> esc : escaleras) {
-                 Pinta pintaEscalera = esc.get(0).getPinta();
-                  resultado += "ESCALERA"
-                            + esc.size()
-                            + " de "
-                            + pintaEscalera
-                            + "\n";
-         }
-
-        
-      }
-      JOptionPane.showMessageDialog(null, resultado);
-    }
+    JOptionPane.showMessageDialog(null, resultado);
 }
+      
+      
+    }
+
+    
+

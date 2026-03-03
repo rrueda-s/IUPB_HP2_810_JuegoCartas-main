@@ -6,7 +6,24 @@ import javax.swing.JPanel;
 public class Jugador 
 
 {
+    private boolean[] cartasEnEscalera() {
 
+        boolean[] usadas = new boolean[cartas.length];
+
+        ArrayList<ArrayList<Carta>> escaleras = obtenerEscaleras();
+
+        for (ArrayList<Carta> esc : escaleras) {
+            for (Carta c : esc) {
+                for (int i = 0; i < cartas.length; i++) {
+                    if (cartas[i] == c) {
+                        usadas[i] = true;
+                    }
+                }
+            }
+        }
+
+        return usadas;
+    }
     private final int TOTAL_CARTAS = 10;
     private final int MARGEN_IZQUIERDA = 10;
     private final int DISTANCIA_ENTRE_CARTAS = 50;
@@ -63,59 +80,116 @@ public class Jugador
         return resultado;
     }
 
+    private int valorCarta(Carta c) {
 
+        NombreCarta nombre = c.getNombre();
+
+        switch (nombre) {
+        case AS:
+        case JACK:
+        case QUEEN:
+        case KING:
+            return 10;
+        default:
+            return nombre.ordinal() + 1;
+        }
+    }
    
     public ArrayList<ArrayList<Carta>> obtenerEscaleras() {
 
         ArrayList<ArrayList<Carta>> escaleras = new ArrayList<>();
 
-         for (Pinta pinta : Pinta.values()) {
+        for (Pinta pinta : Pinta.values()) {
 
             ArrayList<Carta> mismasPintas = new ArrayList<>();
 
-       
             for (Carta c : cartas) {
                 if (c.getPinta() == pinta) {
-                  mismasPintas.add(c);
-                    }
+                    mismasPintas.add(c);
+                }
             }
 
         
             mismasPintas.sort((a, b) ->
-            Integer.compare(
-                a.getNombre().ordinal(),
-                b.getNombre().ordinal()
-            ));
-            
+                Integer.compare(
+                    a.getNombre().ordinal(),
+                    b.getNombre().ordinal()
+                )
+            );
 
-        
-                for (int i = 0; i < mismasPintas.size(); i++) {
+            ArrayList<Carta> secuenciaActual = new ArrayList<>();
 
-                 ArrayList<Carta> secuencia = new ArrayList<>();
-                    secuencia.add(mismasPintas.get(i));
+            for (int i = 0; i < mismasPintas.size(); i++) {
 
-                    for (int j = i + 1; j < mismasPintas.size(); j++) {
+                if (secuenciaActual.isEmpty()) {
+                    secuenciaActual.add(mismasPintas.get(i));
+                    continue;
+                }
 
-                        Carta anterior = secuencia.get(secuencia.size() - 1);
-                        Carta actual = mismasPintas.get(j);
+                Carta anterior = secuenciaActual.get(secuenciaActual.size() - 1);
+                Carta actual = mismasPintas.get(i);
 
-                     if (actual.getNombre().ordinal()
+                if (actual.getNombre().ordinal()
                         == anterior.getNombre().ordinal() + 1) {
 
-                        secuencia.add(actual);
+                    secuenciaActual.add(actual);
 
-                        } else if (actual.getNombre().ordinal()
-                        > anterior.getNombre().ordinal() + 1) {
-                        break;
-                     }
-                        }
+                } else {
 
-                        if (secuencia.size() >= 3) {
-                     escaleras.add(secuencia);
+                    if (secuenciaActual.size() >= 3) {
+                        escaleras.add(new ArrayList<>(secuenciaActual));
                     }
-                 }
-         }
+
+                    secuenciaActual.clear();
+                    secuenciaActual.add(actual);
+                }
+            }
+
+        
+            if (secuenciaActual.size() >= 3) {
+                escaleras.add(secuenciaActual);
+            }
+        }
 
      return escaleras;
-    }   
+    }
+
+    public int calcularPuntaje() {
+
+        boolean[] usada = cartasEnEscalera();
+
+       
+        int[] contadores = new int[NombreCarta.values().length];
+
+        for (Carta carta : cartas)
+        {
+            contadores[carta.getNombre().ordinal()]++;
+        }
+
+        for (int i = 0; i < cartas.length; i++) 
+        {
+
+            if (!usada[i]) 
+            {
+                NombreCarta nombre = cartas[i].getNombre();
+
+                if (contadores[nombre.ordinal()] >= 2) {
+                    usada[i] = true;
+                }
+            }
+        }
+
+        int puntaje = 0;
+
+        for (int i = 0; i < cartas.length; i++) 
+        {
+            if (!usada[i]) {
+                puntaje += valorCarta(cartas[i]);
+            }
+        }
+
+        return puntaje;
+    }
+    
 }
+
